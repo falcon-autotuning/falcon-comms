@@ -94,7 +94,6 @@ setup-nuget-auth:
 		echo "Error: mono is not installed. Please install mono (e.g., 'sudo pacman -S mono' on Arch, 'sudo apt install mono-complete' on Ubuntu)."; \
 		exit 1; \
 	fi
-	@mkdir -p $$HOME/.nuget/NuGet
 	@API_KEY=$$(if [ -f .nuget_api_key ]; then cat .nuget_api_key; else echo $$NUGET_API_KEY; fi); \
 	NUGET_EXE=$$(vcpkg fetch nuget | tail -n1); \
 	mono "$$NUGET_EXE" sources remove -Name "falcon-autotuning" || true; \
