@@ -94,20 +94,24 @@ if(BUILD_TESTS)
 endif()
 
 # Installation
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 install(TARGETS falcon-comms
   EXPORT falcon-comms-targets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 install(DIRECTORY include/falcon-comms
-  DESTINATION include
-  FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING
+    PATTERN "*.hpp"
+    PATTERN "*.h"
 )
 
-include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/falcon-comms-config-version.cmake"
   VERSION ${PROJECT_VERSION}
@@ -115,18 +119,17 @@ write_basic_package_version_file(
 )
 
 install(EXPORT falcon-comms-targets
-  FILE falcon-comms-targets.cmake
+  FILE      falcon-comms-targets.cmake
   NAMESPACE falcon::
-  DESTINATION lib/cmake/falcon-comms
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/falcon-comms
 )
-
-configure_file(cmake/falcon-comms-config.cmake.in
+configure_package_config_file(
+  cmake/falcon-comms-config.cmake.in
   "${CMAKE_CURRENT_BINARY_DIR}/falcon-comms-config.cmake"
-  @ONLY
+  INSTALL_DESTINATION ${CMAKE_INSTALL_DATADIR}/falcon-comms
 )
-
 install(FILES
   "${CMAKE_CURRENT_BINARY_DIR}/falcon-comms-config.cmake"
   "${CMAKE_CURRENT_BINARY_DIR}/falcon-comms-config-version.cmake"
-  DESTINATION lib/cmake/falcon-comms
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/falcon-comms
 )
