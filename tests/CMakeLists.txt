@@ -6,18 +6,16 @@ string(REPLACE ";" "\\;" TEST_PATH_ENV "${DLL_SEARCH_PATHS}")
 set(TEST_PATH_ENV "${TEST_PATH_ENV};$ENV{PATH}")
 
 # Test utilities
-add_library(falcon-comms-test-utils STATIC
-  test_utils/TestFixture.hpp
-)
+add_library(falcon-comms-test-utils INTERFACE)
 
 target_link_libraries(falcon-comms-test-utils
-  PUBLIC
+  INTERFACE
     falcon-comms
     GTest::gtest
 )
 
 target_include_directories(falcon-comms-test-utils
-  PUBLIC
+  INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/test_utils
 )
 
@@ -43,7 +41,7 @@ target_link_libraries(falcon_comms_unit_tests
 
 add_test(NAME falcon_comms_unit_tests COMMAND falcon_comms_unit_tests)
 if(WIN32)
-  set_tests_properties(falcon_comms_unit_tests 
+  set_tests_properties(falcon_comms_unit_tests
     PROPERTIES ENVIRONMENT "PATH=${TEST_PATH_ENV}")
 endif()
 
