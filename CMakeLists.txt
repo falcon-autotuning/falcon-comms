@@ -51,6 +51,7 @@ add_library(falcon-comms SHARED
   src/autotuner_comms.cpp
   src/routine_comms.cpp
   src/runtime_comms.cpp
+  src/commands.cpp
 )
 
 target_include_directories(falcon-comms
@@ -65,6 +66,7 @@ target_link_libraries(falcon-comms
     spdlog::spdlog
     cnats::nats
 )
+target_compile_definitions(falcon-comms PRIVATE falcon_comms_EXPORTS)
 
 # Compiler warnings
 if(MSVC)

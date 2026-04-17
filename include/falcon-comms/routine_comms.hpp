@@ -2,6 +2,7 @@
 
 #include "autotuner_comms.hpp"
 #include "commands_definitions.hpp"
+#include "falcon-comms/export.h"
 #include <string>
 #include <vector>
 
@@ -13,7 +14,7 @@ namespace falcon::comms {
  * Extends AutotunerComms to add measurement capabilities with JetStream
  * support.
  */
-class RoutineComms : public AutotunerComms {
+class FALCON_COMMS_API RoutineComms : public AutotunerComms {
 public:
   RoutineComms();
   ~RoutineComms() override = default;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "commands_definitions.hpp"
+#include "falcon-comms/export.h"
 #include "natsManager.hpp"
 #include <functional>
 #include <optional>
@@ -12,7 +13,7 @@ namespace falcon::comms {
  *
  * Handles StateRequest and StateResponse for autotuning operations.
  */
-class AutotunerComms {
+class FALCON_COMMS_API AutotunerComms {
 public:
   AutotunerComms();
   virtual ~AutotunerComms() = default;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "commands_definitions.hpp"
+#include "falcon-comms/export.h"
 #include "natsManager.hpp"
 #include <functional>
 #include <optional>
@@ -13,7 +14,7 @@ namespace falcon::comms {
  * Handles DeviceConfigRequest, DeviceConfigResponse, PortRequest, and
  * PortPayload.
  */
-class RuntimeComms {
+class FALCON_COMMS_API RuntimeComms {
 public:
   RuntimeComms();
   ~RuntimeComms() = default;

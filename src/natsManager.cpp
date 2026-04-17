@@ -5,9 +5,9 @@
 
 namespace falcon::comms {
 
-// Static member initialization
-bool NatsManager::library_initialized_ = false;
-std::mutex NatsManager::library_mutex_;
+// Define namespace-scope statics (no export issues!)
+bool g_nats_library_initialized = false;
+std::mutex g_nats_library_mutex;
 
 NatsManager &NatsManager::instance() {
   static NatsManager nm;
@@ -17,14 +17,14 @@ NatsManager &NatsManager::instance() {
 NatsManager::NatsManager() { ensure_library_initialized(); }
 
 void NatsManager::ensure_library_initialized() {
-  std::lock_guard<std::mutex> lock(library_mutex_);
-  if (!library_initialized_) {
+  std::lock_guard<std::mutex> lock(g_nats_library_mutex);
+  if (!g_nats_library_initialized) {
     natsStatus s = nats_Open(-1);
     if (s != NATS_OK) {
       throw std::runtime_error("Failed to initialize NATS library: " +
                                std::string(natsStatus_GetText(s)));
     }
-    library_initialized_ = true;
+    g_nats_library_initialized = true;
     spdlog::debug("NATS library initialized");
   }
 }

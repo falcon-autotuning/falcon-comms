@@ -9,6 +9,29 @@
 namespace falcon::comms::test {
 
 /**
+ * @brief Cross-platform environment variable utilities
+ */
+namespace env {
+
+inline void set_var(const std::string &name, const std::string &value) {
+#ifdef _WIN32
+  _putenv_s(name.c_str(), value.c_str());
+#else
+  setenv(name.c_str(), value.c_str(), 1);
+#endif
+}
+
+inline void unset_var(const std::string &name) {
+#ifdef _WIN32
+  _putenv_s(name.c_str(), "");
+#else
+  unsetenv(name.c_str());
+#endif
+}
+
+} // namespace env
+
+/**
  * @brief Base test fixture with environment setup
  */
 class CommsTestFixture : public ::testing::Test {
@@ -17,7 +40,7 @@ protected:
 
   void TearDown() override {
     // Clean up environment variables to avoid pollution
-    unsetenv("NATS_URL");
+    env::unset_var("NATS_URL");
 
     // Force disconnect to clean up resources properly
     // This ensures cleanup happens while NATS library is still valid
@@ -38,10 +61,10 @@ protected:
     }
 
     // Set NATS_URL for Hub connections
-    setenv("NATS_URL", nats_url_.c_str(), 1);
+    env::set_var("NATS_URL", nats_url_);
 
     // Set log level to debug for tests
-    setenv("SPDLOG_LEVEL", "debug", 1);
+    env::set_var("SPDLOG_LEVEL", "debug");
   }
 
   [[nodiscard]] std::string getNatsUrl() const { return nats_url_; }
