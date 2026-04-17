@@ -4,10 +4,18 @@
 #include <string>
 
 struct FALCON_COMMS_API CommandBase {
-  virtual ~CommandBase() = default;
+  CommandBase();
+  CommandBase(const CommandBase &);
+  CommandBase(CommandBase &&);
+  CommandBase &operator=(const CommandBase &);
+  CommandBase &operator=(CommandBase &&);
+  virtual ~CommandBase();
+
   virtual std::string command_name() const = 0;
   virtual nlohmann::json to_json() const = 0;
 };
+
+// ... rest of structs remain the same
 
 // MeasureCommand
 struct FALCON_COMMS_API MeasureCommand : public CommandBase {

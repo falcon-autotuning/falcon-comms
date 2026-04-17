@@ -13,7 +13,7 @@ std::string make_state_response_subject() {
 namespace falcon::comms {
 
 AutotunerComms::AutotunerComms() : hub_(NatsManager::instance()) {}
-
+AutotunerComms::~AutotunerComms() = default;
 StateResponse AutotunerComms::subscribe_state_response(int timeout_ms,
                                                        int time) {
   std::promise<StateResponse> prom;

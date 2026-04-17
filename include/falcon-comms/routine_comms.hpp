@@ -17,7 +17,7 @@ namespace falcon::comms {
 class FALCON_COMMS_API RoutineComms : public AutotunerComms {
 public:
   RoutineComms();
-  ~RoutineComms() override = default;
+  ~RoutineComms();
 
   /**
    * @brief Subscribe to measure responses with a callback

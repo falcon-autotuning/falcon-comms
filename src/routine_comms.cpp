@@ -15,6 +15,7 @@ std::string make_measure_response_subject() {
 namespace falcon::comms {
 
 RoutineComms::RoutineComms() = default;
+RoutineComms::~RoutineComms() = default;
 MeasureResponse RoutineComms::subscribe_measure_response(std::string request,
                                                          int timeout_ms,
                                                          int time) {

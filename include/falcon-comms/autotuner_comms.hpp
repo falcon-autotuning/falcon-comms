@@ -16,7 +16,7 @@ namespace falcon::comms {
 class FALCON_COMMS_API AutotunerComms {
 public:
   AutotunerComms();
-  virtual ~AutotunerComms() = default;
+  ~AutotunerComms();
 
   /**
    * @brief Subscribe to state responses with a callback

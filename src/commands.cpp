@@ -1,4 +1,15 @@
 #include "falcon-comms/commands_definitions.hpp"
+
+// ============================================================================
+// CommandBase
+// ============================================================================
+CommandBase::CommandBase() = default;
+CommandBase::CommandBase(const CommandBase &) = default;
+CommandBase::CommandBase(CommandBase &&) = default;
+CommandBase &CommandBase::operator=(const CommandBase &) = default;
+CommandBase &CommandBase::operator=(CommandBase &&) = default;
+CommandBase::~CommandBase() = default;
+
 // ============================================================================
 // MeasureCommand
 // ============================================================================
