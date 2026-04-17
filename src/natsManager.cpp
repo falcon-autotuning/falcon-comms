@@ -2,7 +2,22 @@
 #include <cstdlib>
 #include <spdlog/spdlog.h>
 #include <stdexcept>
-
+namespace {
+void message_handler(natsConnection *nc, natsSubscription *sub, natsMsg *msg,
+                     void *closure) {
+  (void)nc;
+  (void)sub;
+  auto *callback =
+      static_cast<std::function<void(const std::string &)> *>(closure);
+  std::string data(natsMsg_GetData(msg), natsMsg_GetDataLength(msg));
+  try {
+    (*callback)(data);
+  } catch (const std::exception &e) {
+    spdlog::error("Exception in NATS message handler: {}", e.what());
+  }
+  natsMsg_Destroy(msg);
+}
+} // namespace
 namespace falcon::comms {
 
 // Define namespace-scope statics (no export issues!)
@@ -31,11 +46,11 @@ void NatsManager::ensure_library_initialized() {
 
 void NatsManager::ensure_connected() {
   std::lock_guard<std::mutex> lock(mutex_);
-  if (conn_) {
+  if (conn_ != nullptr) {
     return; // Already connected
   }
   const char *nats_url = std::getenv("NATS_URL");
-  if (!nats_url || strlen(nats_url) == 0) {
+  if ((nats_url == nullptr) || strlen(nats_url) == 0) {
     throw std::runtime_error("NATS_URL environment variable not set");
   }
   spdlog::debug("Connecting to NATS: {}", nats_url);
@@ -58,15 +73,15 @@ void NatsManager::ensure_connected() {
 
 void NatsManager::ensure_jetstream() {
   std::lock_guard<std::mutex> lock(mutex_);
-  if (js_) {
+  if (js_ != nullptr) {
     return; // Already initialized
   }
-  if (!conn_) {
+  if (conn_ == nullptr) {
     throw std::runtime_error(
         "NATS connection must be established before JetStream");
   }
   // Initialize JetStream context with NULL options (use defaults)
-  natsStatus s = natsConnection_JetStream(&js_, conn_, NULL);
+  natsStatus s = natsConnection_JetStream(&js_, conn_, nullptr);
   if (s != NATS_OK) {
     throw std::runtime_error("Failed to initialize JetStream: " +
                              std::string(natsStatus_GetText(s)));
@@ -110,7 +125,7 @@ std::optional<std::string> NatsManager::request(const std::string &subject,
     throw std::runtime_error("NATS request failed: " +
                              std::string(natsStatus_GetText(s)));
   }
-  if (!reply) {
+  if (reply == nullptr) {
     return std::nullopt;
   }
   std::string response(natsMsg_GetData(reply), natsMsg_GetDataLength(reply));
@@ -131,22 +146,6 @@ NatsManager::request_json(const std::string &subject,
     spdlog::error("Failed to parse JSON response: {}", e.what());
     return std::nullopt;
   }
-}
-
-// Callback wrapper for NATS subscription
-static void message_handler(natsConnection *nc, natsSubscription *sub,
-                            natsMsg *msg, void *closure) {
-  (void)nc;
-  (void)sub;
-  auto *callback =
-      static_cast<std::function<void(const std::string &)> *>(closure);
-  std::string data(natsMsg_GetData(msg), natsMsg_GetDataLength(msg));
-  try {
-    (*callback)(data);
-  } catch (const std::exception &e) {
-    spdlog::error("Exception in NATS message handler: {}", e.what());
-  }
-  natsMsg_Destroy(msg);
 }
 
 void NatsManager::subscribe(const std::string &subject,
@@ -190,10 +189,6 @@ NatsManager::jetstream_pull(const std::string &stream,
   ensure_jetstream();
   std::vector<std::string> messages;
 
-  // Create persistent copies of strings for subscription options
-  std::string stream_copy = stream;
-  std::string consumer_copy = consumer;
-
   // Use pull subscribe for JetStream
   natsSubscription *sub = nullptr;
   natsStatus s = js_PullSubscribe(&sub, js_, stream.c_str(), consumer.c_str(),
@@ -207,9 +202,9 @@ NatsManager::jetstream_pull(const std::string &stream,
   for (int i = 0; i < batch_size; ++i) {
     natsMsg *msg = nullptr;
     s = natsSubscription_NextMsg(&msg, sub, 1000); // 1000 ms timeout
-    if (s == NATS_OK && msg) {
+    if (s == NATS_OK && (msg != nullptr)) {
       messages.emplace_back(natsMsg_GetData(msg), natsMsg_GetDataLength(msg));
-      natsMsg_Ack(msg, NULL);
+      natsMsg_Ack(msg, nullptr);
       natsMsg_Destroy(msg);
     } else {
       break; // No more messages or timeout
@@ -230,7 +225,7 @@ jsCtx *NatsManager::get_jetstream_context() {
 
 bool NatsManager::is_connected() const {
   std::lock_guard<std::mutex> lock(mutex_);
-  return conn_ != nullptr && natsConnection_IsClosed(conn_) == false;
+  return conn_ != nullptr && !natsConnection_IsClosed(conn_);
 }
 
 void NatsManager::connect(const std::string &url) {
@@ -241,8 +236,8 @@ void NatsManager::connect(const std::string &url) {
     // Clean up existing subscriptions before reconnecting
     cleanup_subscriptions();
 
-    if (conn_) {
-      if (js_) {
+    if (conn_ != nullptr) {
+      if (js_ != nullptr) {
         jsCtx_Destroy(js_);
         js_ = nullptr;
       }
@@ -268,12 +263,9 @@ void NatsManager::connect(const std::string &url) {
 void NatsManager::cleanup_subscriptions() {
   // Clean up all subscriptions before destroying connection
   for (auto &sub_data : subscriptions_) {
-    if (sub_data.subscription) {
+    if (sub_data.subscription != nullptr) {
       natsSubscription_Unsubscribe(sub_data.subscription);
       natsSubscription_Destroy(sub_data.subscription);
-    }
-    if (sub_data.callback) {
-      delete sub_data.callback;
     }
   }
   subscriptions_.clear();
@@ -285,11 +277,11 @@ void NatsManager::disconnect() {
   // Clean up subscriptions BEFORE destroying connection
   cleanup_subscriptions();
 
-  if (js_) {
+  if (js_ != nullptr) {
     jsCtx_Destroy(js_);
     js_ = nullptr;
   }
-  if (conn_) {
+  if (conn_ != nullptr) {
     natsConnection_Destroy(conn_);
     conn_ = nullptr;
     spdlog::info("NATS disconnected");

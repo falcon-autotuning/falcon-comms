@@ -1,6 +1,5 @@
 #include "falcon-comms/autotuner_comms.hpp"
 #include <future>
-#include <iostream>
 #include <spdlog/spdlog.h>
 namespace {
 std::string make_state_request_subject() {

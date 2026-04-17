@@ -3,8 +3,6 @@
 #include "commands_definitions.hpp"
 #include "falcon-comms/export.h"
 #include "natsManager.hpp"
-#include <functional>
-#include <optional>
 
 namespace falcon::comms {
 
@@ -16,6 +14,11 @@ namespace falcon::comms {
 class FALCON_COMMS_API AutotunerComms {
 public:
   AutotunerComms();
+  AutotunerComms(const AutotunerComms &) = default;
+  AutotunerComms(AutotunerComms &&) = delete;
+  AutotunerComms &operator=(const AutotunerComms &) = delete;
+  AutotunerComms &operator=(AutotunerComms &&) = delete;
+  explicit AutotunerComms(NatsManager &hub) : hub_(hub) {}
   ~AutotunerComms();
 
   /**

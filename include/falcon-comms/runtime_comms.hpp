@@ -3,8 +3,6 @@
 #include "commands_definitions.hpp"
 #include "falcon-comms/export.h"
 #include "natsManager.hpp"
-#include <functional>
-#include <optional>
 
 namespace falcon::comms {
 
@@ -17,6 +15,11 @@ namespace falcon::comms {
 class FALCON_COMMS_API RuntimeComms {
 public:
   RuntimeComms();
+  RuntimeComms(const RuntimeComms &) = default;
+  RuntimeComms(RuntimeComms &&) = delete;
+  RuntimeComms &operator=(const RuntimeComms &) = delete;
+  RuntimeComms &operator=(RuntimeComms &&) = delete;
+  explicit RuntimeComms(NatsManager &hub) : hub_(hub) {}
   ~RuntimeComms() = default;
 
   /**

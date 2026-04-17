@@ -6,16 +6,14 @@
 struct FALCON_COMMS_API CommandBase {
   CommandBase();
   CommandBase(const CommandBase &);
-  CommandBase(CommandBase &&);
+  CommandBase(CommandBase &&) noexcept;
   CommandBase &operator=(const CommandBase &);
-  CommandBase &operator=(CommandBase &&);
+  CommandBase &operator=(CommandBase &&) noexcept;
   virtual ~CommandBase();
 
-  virtual std::string command_name() const = 0;
-  virtual nlohmann::json to_json() const = 0;
+  [[nodiscard]] virtual std::string command_name() const = 0;
+  [[nodiscard]] virtual nlohmann::json to_json() const = 0;
 };
-
-// ... rest of structs remain the same
 
 // MeasureCommand
 struct FALCON_COMMS_API MeasureCommand : public CommandBase {
@@ -25,13 +23,13 @@ struct FALCON_COMMS_API MeasureCommand : public CommandBase {
 
   MeasureCommand();
   MeasureCommand(const MeasureCommand &);
-  MeasureCommand(MeasureCommand &&);
+  MeasureCommand(MeasureCommand &&) noexcept;
   MeasureCommand &operator=(const MeasureCommand &);
-  MeasureCommand &operator=(MeasureCommand &&);
-  ~MeasureCommand();
+  MeasureCommand &operator=(MeasureCommand &&) noexcept;
+  ~MeasureCommand() override;
 
-  std::string command_name() const override;
-  nlohmann::json to_json() const override;
+  [[nodiscard]] std::string command_name() const override;
+  [[nodiscard]] nlohmann::json to_json() const override;
   static MeasureCommand from_json(const nlohmann::json &j);
 };
 
@@ -44,13 +42,13 @@ struct FALCON_COMMS_API MeasureResponse : public CommandBase {
 
   MeasureResponse();
   MeasureResponse(const MeasureResponse &);
-  MeasureResponse(MeasureResponse &&);
+  MeasureResponse(MeasureResponse &&) noexcept;
   MeasureResponse &operator=(const MeasureResponse &);
-  MeasureResponse &operator=(MeasureResponse &&);
-  ~MeasureResponse();
+  MeasureResponse &operator=(MeasureResponse &&) noexcept;
+  ~MeasureResponse() override;
 
-  std::string command_name() const override;
-  nlohmann::json to_json() const override;
+  [[nodiscard]] std::string command_name() const override;
+  [[nodiscard]] nlohmann::json to_json() const override;
   static MeasureResponse from_json(const nlohmann::json &j);
 };
 
@@ -61,13 +59,13 @@ struct FALCON_COMMS_API StateRequest : public CommandBase {
 
   StateRequest();
   StateRequest(const StateRequest &);
-  StateRequest(StateRequest &&);
+  StateRequest(StateRequest &&) noexcept;
   StateRequest &operator=(const StateRequest &);
-  StateRequest &operator=(StateRequest &&);
-  ~StateRequest();
+  StateRequest &operator=(StateRequest &&) noexcept;
+  ~StateRequest() override;
 
-  std::string command_name() const override;
-  nlohmann::json to_json() const override;
+  [[nodiscard]] std::string command_name() const override;
+  [[nodiscard]] nlohmann::json to_json() const override;
   static StateRequest from_json(const nlohmann::json &j);
 };
 
@@ -79,13 +77,13 @@ struct FALCON_COMMS_API StateResponse : public CommandBase {
 
   StateResponse();
   StateResponse(const StateResponse &);
-  StateResponse(StateResponse &&);
+  StateResponse(StateResponse &&) noexcept;
   StateResponse &operator=(const StateResponse &);
-  StateResponse &operator=(StateResponse &&);
-  ~StateResponse();
+  StateResponse &operator=(StateResponse &&) noexcept;
+  ~StateResponse() override;
 
-  std::string command_name() const override;
-  nlohmann::json to_json() const override;
+  [[nodiscard]] std::string command_name() const override;
+  [[nodiscard]] nlohmann::json to_json() const override;
   static StateResponse from_json(const nlohmann::json &j);
 };
 
@@ -96,13 +94,13 @@ struct FALCON_COMMS_API PortRequest : public CommandBase {
 
   PortRequest();
   PortRequest(const PortRequest &);
-  PortRequest(PortRequest &&);
+  PortRequest(PortRequest &&) noexcept;
   PortRequest &operator=(const PortRequest &);
-  PortRequest &operator=(PortRequest &&);
-  ~PortRequest();
+  PortRequest &operator=(PortRequest &&) noexcept;
+  ~PortRequest() override;
 
-  std::string command_name() const override;
-  nlohmann::json to_json() const override;
+  [[nodiscard]] std::string command_name() const override;
+  [[nodiscard]] nlohmann::json to_json() const override;
   static PortRequest from_json(const nlohmann::json &j);
 };
 
@@ -115,13 +113,13 @@ struct FALCON_COMMS_API PortPayload : public CommandBase {
 
   PortPayload();
   PortPayload(const PortPayload &);
-  PortPayload(PortPayload &&);
+  PortPayload(PortPayload &&) noexcept;
   PortPayload &operator=(const PortPayload &);
-  PortPayload &operator=(PortPayload &&);
-  ~PortPayload();
+  PortPayload &operator=(PortPayload &&) noexcept;
+  ~PortPayload() override;
 
-  std::string command_name() const override;
-  nlohmann::json to_json() const override;
+  [[nodiscard]] std::string command_name() const override;
+  [[nodiscard]] nlohmann::json to_json() const override;
   static PortPayload from_json(const nlohmann::json &j);
 };
 
@@ -132,13 +130,13 @@ struct FALCON_COMMS_API DeviceConfigRequest : public CommandBase {
 
   DeviceConfigRequest();
   DeviceConfigRequest(const DeviceConfigRequest &);
-  DeviceConfigRequest(DeviceConfigRequest &&);
+  DeviceConfigRequest(DeviceConfigRequest &&) noexcept;
   DeviceConfigRequest &operator=(const DeviceConfigRequest &);
-  DeviceConfigRequest &operator=(DeviceConfigRequest &&);
-  ~DeviceConfigRequest();
+  DeviceConfigRequest &operator=(DeviceConfigRequest &&) noexcept;
+  ~DeviceConfigRequest() override;
 
-  std::string command_name() const override;
-  nlohmann::json to_json() const override;
+  [[nodiscard]] std::string command_name() const override;
+  [[nodiscard]] nlohmann::json to_json() const override;
   static DeviceConfigRequest from_json(const nlohmann::json &j);
 };
 
@@ -150,12 +148,12 @@ struct FALCON_COMMS_API DeviceConfigResponse : public CommandBase {
 
   DeviceConfigResponse();
   DeviceConfigResponse(const DeviceConfigResponse &);
-  DeviceConfigResponse(DeviceConfigResponse &&);
+  DeviceConfigResponse(DeviceConfigResponse &&) noexcept;
   DeviceConfigResponse &operator=(const DeviceConfigResponse &);
-  DeviceConfigResponse &operator=(DeviceConfigResponse &&);
-  ~DeviceConfigResponse();
+  DeviceConfigResponse &operator=(DeviceConfigResponse &&) noexcept;
+  ~DeviceConfigResponse() override;
 
-  std::string command_name() const override;
-  nlohmann::json to_json() const override;
+  [[nodiscard]] std::string command_name() const override;
+  [[nodiscard]] nlohmann::json to_json() const override;
   static DeviceConfigResponse from_json(const nlohmann::json &j);
 };

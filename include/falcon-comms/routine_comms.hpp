@@ -17,6 +17,10 @@ namespace falcon::comms {
 class FALCON_COMMS_API RoutineComms : public AutotunerComms {
 public:
   RoutineComms();
+  RoutineComms(const RoutineComms &) = default;
+  RoutineComms(RoutineComms &&) = delete;
+  RoutineComms &operator=(const RoutineComms &) = delete;
+  RoutineComms &operator=(RoutineComms &&) = delete;
   ~RoutineComms();
 
   /**
