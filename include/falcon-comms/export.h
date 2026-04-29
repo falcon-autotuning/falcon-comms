@@ -3,7 +3,7 @@
 
 #ifdef _WIN32
 // Building the DLL
-#ifdef falcon_core_EXPORTS
+#ifdef falcon_comms_EXPORTS
 #define FALCON_COMMS_API __declspec(dllexport)
 #else
 // Using the DLL
