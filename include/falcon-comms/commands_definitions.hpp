@@ -18,7 +18,7 @@ struct FALCON_COMMS_API CommandBase {
 // MeasureCommand
 struct FALCON_COMMS_API MeasureCommand : public CommandBase {
   static constexpr const char *NAME = "MEASURE_COMMAND";
-  int timestamp = 0;
+  long long timestamp = 0;
   std::string request;
 
   MeasureCommand();
@@ -37,7 +37,7 @@ struct FALCON_COMMS_API MeasureCommand : public CommandBase {
 struct FALCON_COMMS_API MeasureResponse : public CommandBase {
   static constexpr const char *NAME = "MEASURE_RESPONSE";
   std::string stream;
-  int timestamp = 0;
+  long long timestamp = 0;
   std::string channel;
 
   MeasureResponse();
@@ -55,7 +55,7 @@ struct FALCON_COMMS_API MeasureResponse : public CommandBase {
 // StateRequest
 struct FALCON_COMMS_API StateRequest : public CommandBase {
   static constexpr const char *NAME = "STATE_REQUEST";
-  int timestamp = 0;
+  long long timestamp = 0;
 
   StateRequest();
   StateRequest(const StateRequest &);
@@ -73,7 +73,7 @@ struct FALCON_COMMS_API StateRequest : public CommandBase {
 struct FALCON_COMMS_API StateResponse : public CommandBase {
   static constexpr const char *NAME = "STATE_RESPONSE";
   std::string response;
-  int timestamp = 0;
+  long long timestamp = 0;
 
   StateResponse();
   StateResponse(const StateResponse &);
@@ -90,7 +90,7 @@ struct FALCON_COMMS_API StateResponse : public CommandBase {
 // PortRequest
 struct FALCON_COMMS_API PortRequest : public CommandBase {
   static constexpr const char *NAME = "PORT_REQUEST";
-  int timestamp = 0;
+  long long timestamp = 0;
 
   PortRequest();
   PortRequest(const PortRequest &);
@@ -109,7 +109,7 @@ struct FALCON_COMMS_API PortPayload : public CommandBase {
   static constexpr const char *NAME = "PORT_PAYLOAD";
   std::string knobs;
   std::string meters;
-  int timestamp = 0;
+  long long timestamp = 0;
 
   PortPayload();
   PortPayload(const PortPayload &);
@@ -126,7 +126,7 @@ struct FALCON_COMMS_API PortPayload : public CommandBase {
 // DeviceConfigRequest
 struct FALCON_COMMS_API DeviceConfigRequest : public CommandBase {
   static constexpr const char *NAME = "DEVICE_CONFIG_REQUEST";
-  int timestamp = 0;
+  long long timestamp = 0;
 
   DeviceConfigRequest();
   DeviceConfigRequest(const DeviceConfigRequest &);
@@ -144,7 +144,7 @@ struct FALCON_COMMS_API DeviceConfigRequest : public CommandBase {
 struct FALCON_COMMS_API DeviceConfigResponse : public CommandBase {
   static constexpr const char *NAME = "DEVICE_CONFIG_RESPONSE";
   std::string response;
-  int timestamp = 0;
+  long long timestamp = 0;
 
   DeviceConfigResponse();
   DeviceConfigResponse(const DeviceConfigResponse &);

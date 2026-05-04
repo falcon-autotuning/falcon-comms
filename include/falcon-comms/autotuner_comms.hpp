@@ -27,7 +27,7 @@ public:
    * @param time current time
    * @return StateResponse if successful
    */
-  StateResponse subscribe_state_response(int timeout_ms, int time);
+  StateResponse subscribe_state_response(int timeout_ms, long long time);
 
 protected:
   NatsManager &hub_;

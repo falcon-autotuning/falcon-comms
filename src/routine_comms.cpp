@@ -18,7 +18,7 @@ RoutineComms::RoutineComms() = default;
 RoutineComms::~RoutineComms() = default;
 MeasureResponse RoutineComms::subscribe_measure_response(std::string request,
                                                          int timeout_ms,
-                                                         int time) {
+                                                         long long time) {
   std::promise<MeasureResponse> prom;
   auto fut = prom.get_future();
   std::atomic<bool> done{false};

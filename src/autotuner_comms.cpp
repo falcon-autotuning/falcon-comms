@@ -14,7 +14,7 @@ namespace falcon::comms {
 AutotunerComms::AutotunerComms() : hub_(NatsManager::instance()) {}
 AutotunerComms::~AutotunerComms() = default;
 StateResponse AutotunerComms::subscribe_state_response(int timeout_ms,
-                                                       int time) {
+                                                       long long time) {
   std::promise<StateResponse> prom;
   auto fut = prom.get_future();
   std::atomic<bool> done{false};

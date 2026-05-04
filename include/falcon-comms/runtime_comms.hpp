@@ -28,7 +28,8 @@ public:
    * @param time current time
    * @return DeviceConfigResponse if successful
    */
-  DeviceConfigResponse subscribe_config_response(int timeout_ms, int time);
+  DeviceConfigResponse subscribe_config_response(int timeout_ms,
+                                                 long long time);
 
   /**
    * @brief Subscribe to ports with a callback
@@ -36,7 +37,7 @@ public:
    * @param time current time
    * @return  PortPayloadif successful
    */
-  PortPayload subscribe_port_payload(int timeout_ms, int time);
+  PortPayload subscribe_port_payload(int timeout_ms, long long time);
 
 private:
   NatsManager &hub_;

@@ -23,7 +23,7 @@ namespace falcon::comms {
 RuntimeComms::RuntimeComms() : hub_(NatsManager::instance()) {}
 
 DeviceConfigResponse RuntimeComms::subscribe_config_response(int timeout_ms,
-                                                             int time) {
+                                                             long long time) {
   std::promise<DeviceConfigResponse> prom;
   auto fut = prom.get_future();
   std::atomic<bool> done{false};
@@ -67,7 +67,8 @@ DeviceConfigResponse RuntimeComms::subscribe_config_response(int timeout_ms,
   }
 }
 
-PortPayload RuntimeComms::subscribe_port_payload(int timeout_ms, int time) {
+PortPayload RuntimeComms::subscribe_port_payload(int timeout_ms,
+                                                 long long time) {
   std::promise<PortPayload> prom;
   auto fut = prom.get_future();
   std::atomic<bool> done{false};

@@ -31,7 +31,7 @@ public:
    * @return MeasureResponse if successful
    */
   MeasureResponse subscribe_measure_response(std::string request,
-                                             int timeout_ms, int time);
+                                             int timeout_ms, long long time);
 
   /**
    * @brief Pull measurement data from JetStream
