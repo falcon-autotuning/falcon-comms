@@ -198,17 +198,23 @@ NatsManager::jetstream_pull(const std::string &stream,
                              std::string(natsStatus_GetText(s)));
   }
 
-  // Pull messages (up to batch_size)
-  for (int i = 0; i < batch_size; ++i) {
-    natsMsg *msg = nullptr;
-    s = natsSubscription_NextMsg(&msg, sub, 1000); // 1000 ms timeout
-    if (s == NATS_OK && (msg != nullptr)) {
-      messages.emplace_back(natsMsg_GetData(msg), natsMsg_GetDataLength(msg));
-      natsMsg_Ack(msg, nullptr);
-      natsMsg_Destroy(msg);
-    } else {
-      break; // No more messages or timeout
+  // natsSubscription_NextMsg returns NATS_INVALID_SUBSCRIPTION for pull
+  // consumers in cnats v3 — use natsSubscription_Fetch instead.
+  natsMsgList list;
+  memset(&list, 0, sizeof(list));
+  s = natsSubscription_Fetch(&list, sub, batch_size, 5000, nullptr);
+  if (s == NATS_OK) {
+    for (int i = 0; i < list.Count; i++) {
+      if (list.Msgs[i] != nullptr) {
+        messages.emplace_back(natsMsg_GetData(list.Msgs[i]),
+                              natsMsg_GetDataLength(list.Msgs[i]));
+        natsMsg_Ack(list.Msgs[i], nullptr);
+      }
     }
+    natsMsgList_Destroy(&list);
+  } else if (s != NATS_TIMEOUT) {
+    natsMsgList_Destroy(&list);
+    spdlog::error("JetStream fetch failed: {}", natsStatus_GetText(s));
   }
 
   // Clean up subscription
