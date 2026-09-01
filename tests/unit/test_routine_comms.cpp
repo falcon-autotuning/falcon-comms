@@ -63,12 +63,23 @@ TEST_F(RoutineCommsUnitTest, SubscribeMeasureResponse) {
     auto &hub = NatsManager::instance();
     hub.subscribe("INSTRUMENTHUB.MEASURE_COMMAND", [&](const std::string &msg) {
       request_received = true;
+      auto command = MeasureCommand::from_json(nlohmann::json::parse(msg));
+
+      MeasureResponse unrelated_response;
+      unrelated_response.timestamp = command.timestamp + 1;
+      unrelated_response.stream = "WRONG_MEASUREMENTS";
+      unrelated_response.channel = "wrong_data";
+      hub.publish("FALCON.MEASURE_RESPONSE." +
+                      std::to_string(command.timestamp),
+                  unrelated_response.to_json().dump());
+
       MeasureResponse response;
-      response.timestamp = 999999;
+      response.timestamp = command.timestamp;
       response.stream = "MEASUREMENTS";
       response.channel = "voltage_data";
-      nlohmann::json j = response.to_json();
-      hub.publish("FALCON.MEASURE_RESPONSE", j.dump());
+      hub.publish("FALCON.MEASURE_RESPONSE." +
+                      std::to_string(command.timestamp),
+                  response.to_json().dump());
     });
     responder_ready = true;
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -88,7 +99,7 @@ TEST_F(RoutineCommsUnitTest, SubscribeMeasureResponse) {
   responder.join();
 
   EXPECT_TRUE(response);
-  EXPECT_EQ(response->timestamp, 999999);
+  EXPECT_EQ(response->timestamp, 100000);
   EXPECT_EQ(response->stream, "MEASUREMENTS");
   EXPECT_EQ(response->channel, "voltage_data");
 }

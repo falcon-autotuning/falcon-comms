@@ -27,11 +27,12 @@ public:
    * @brief Subscribe to measure responses with a callback
    * @param request the measurement request to perform
    * @param timeout_ms the timeout in milliseconds to wait
-   * @param time current time
+   * @param timestamp unique command timestamp used to correlate the response
    * @return MeasureResponse if successful
    */
   MeasureResponse subscribe_measure_response(std::string request,
-                                             int timeout_ms, long long time);
+                                             int timeout_ms,
+                                             long long timestamp);
 
   /**
    * @brief Pull measurement data from JetStream

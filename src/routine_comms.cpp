@@ -8,8 +8,9 @@ namespace {
 std::string make_measure_command_subject() {
   return "INSTRUMENTHUB." + std::string(MeasureCommand::NAME);
 }
-std::string make_measure_response_subject() {
-  return "FALCON." + std::string(MeasureResponse::NAME);
+std::string make_measure_response_subject(long long timestamp) {
+  return "FALCON." + std::string(MeasureResponse::NAME) + "." +
+         std::to_string(timestamp);
 }
 } // namespace
 namespace falcon::comms {
@@ -18,31 +19,33 @@ RoutineComms::RoutineComms() = default;
 RoutineComms::~RoutineComms() = default;
 MeasureResponse RoutineComms::subscribe_measure_response(std::string request,
                                                          int timeout_ms,
-                                                         long long time) {
+                                                         long long timestamp) {
   std::promise<MeasureResponse> prom;
   auto fut = prom.get_future();
   std::atomic<bool> done{false};
 
-  std::string subject = make_measure_response_subject();
+  std::string subject = make_measure_response_subject(timestamp);
 
-  hub_.subscribe(subject, [&prom, &done](const std::string &data) {
-    if (done.exchange(true)) {
-      return;
-    }
+  hub_.subscribe(subject, [&prom, &done, timestamp](const std::string &data) {
     try {
       auto json = nlohmann::json::parse(data);
       MeasureResponse response = MeasureResponse::from_json(json);
+      if (response.timestamp != timestamp || done.exchange(true)) {
+        return;
+      }
       prom.set_value(response);
     } catch (const std::exception &e) {
-      try {
-        prom.set_exception(std::make_exception_ptr(e));
-      } catch (const std::future_error &) {
+      if (!done.exchange(true)) {
+        try {
+          prom.set_exception(std::make_exception_ptr(e));
+        } catch (const std::future_error &) {
+        }
       }
     }
   });
 
   MeasureCommand req;
-  req.timestamp = time;
+  req.timestamp = timestamp;
   req.request = std::move(request);
   hub_.publish(make_measure_command_subject(), req.to_json().dump());
 
