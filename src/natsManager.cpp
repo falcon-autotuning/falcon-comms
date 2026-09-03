@@ -202,7 +202,12 @@ NatsManager::jetstream_pull(const std::string &stream,
   // consumers in cnats v3 — use natsSubscription_Fetch instead.
   natsMsgList list;
   memset(&list, 0, sizeof(list));
-  s = natsSubscription_Fetch(&list, sub, batch_size, 5000, nullptr);
+  jsErrCode js_err{};
+
+  s = natsSubscription_Fetch(&list, sub, batch_size, 5000, &js_err);
+
+  spdlog::info("Fetch status={} jsErr={} count={}", natsStatus_GetText(s),
+               static_cast<int>(js_err), list.Count);
   if (s == NATS_OK) {
     for (int i = 0; i < list.Count; i++) {
       if (list.Msgs[i] != nullptr) {
