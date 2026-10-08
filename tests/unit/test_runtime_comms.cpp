@@ -69,6 +69,7 @@ TEST_F(RuntimeCommsUnitTest, SubscribePortPayload) {
       payload.timestamp = 654321;
       payload.knobs = "{\"voltage_knob\": \"SMU1.voltage\"}";
       payload.meters = "{\"current_meter\": \"SMU1.current\"}";
+      payload.settings = "{\"sample_rate\": \"1000\"}";
       nlohmann::json j = payload.to_json();
       hub.publish("FALCON.PORT_PAYLOAD", j.dump());
     });
@@ -93,6 +94,7 @@ TEST_F(RuntimeCommsUnitTest, SubscribePortPayload) {
   EXPECT_EQ(response->timestamp, 654321);
   EXPECT_TRUE(response->knobs.find("voltage_knob") != std::string::npos);
   EXPECT_TRUE(response->meters.find("current_meter") != std::string::npos);
+  EXPECT_TRUE(response->settings.find("sample_rate") != std::string::npos);
 }
 
 TEST_F(RuntimeCommsUnitTest, SubscribeConfigResponseTimeout) {

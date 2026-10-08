@@ -109,6 +109,7 @@ struct FALCON_COMMS_API PortPayload : public CommandBase {
   static constexpr const char *NAME = "PORT_PAYLOAD";
   std::string knobs;
   std::string meters;
+  std::string settings;
   long long timestamp = 0;
 
   PortPayload();

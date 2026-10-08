@@ -174,6 +174,7 @@ nlohmann::json PortPayload::to_json() const {
   json["meters"] = meters;
   json["timestamp"] = timestamp;
   json["knobs"] = knobs;
+  json["settings"] = settings;
   return json;
 }
 
@@ -184,6 +185,9 @@ PortPayload PortPayload::from_json(const nlohmann::json &j) {
   }
   if (j.contains("meters")) {
     j.at("meters").get_to(obj.meters);
+  }
+  if (j.contains("settings")) {
+    j.at("settings").get_to(obj.settings);
   }
   if (j.contains("timestamp")) {
     j.at("timestamp").get_to(obj.timestamp);
